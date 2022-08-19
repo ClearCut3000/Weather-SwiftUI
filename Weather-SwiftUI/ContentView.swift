@@ -8,14 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        Text("Hello, world!")
-            .padding()
+
+  //MARK: - Main View
+  var body: some View {
+    ZStack {
+      LinearGradient(gradient: Gradient(colors: [.blue, .white]),
+                     startPoint: .topLeading,
+                     endPoint: .bottomTrailing)
+        .edgesIgnoringSafeArea(.all)
     }
+  }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  static var previews: some View {
+    ContentView()
+  }
 }
