@@ -26,7 +26,9 @@ class NetworkManager {
     let (data, response) = try await URLSession.shared.data(from: url)
     print(data)
     do {
-      return try JSONDecoder().decode(Forecast.self, from: data)
+      let decoder = JSONDecoder()
+      decoder.keyDecodingStrategy = .convertFromSnakeCase
+      return try decoder.decode(Forecast.self, from: data)
     } catch {
       print("Can't decode")
       throw WeatherError.invalidData
