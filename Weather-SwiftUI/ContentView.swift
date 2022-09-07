@@ -10,11 +10,12 @@ import SwiftUI
 struct ContentView: View {
   //MARK: - Properties
   @State private var isNight = false
+  @State private var forecast: Forecast?
 
   //MARK: - Main View
   var body: some View {
     ZStack {
-      BackgroundView(isNight: $isNight)
+      BackgroundView(isNight: isNight)
       VStack {
         CityTextView(cityName: "Cupertino, CA")
         MainWeatherStackView(imageName: isNight ? "moon.stars.fill" : "cloud.sun.fill",
@@ -53,6 +54,27 @@ struct ContentView: View {
         Spacer()
       }
     }
+    .onAppear {
+      Task {
+        do {
+          self.forecast = try await NetworkManager.shared.getForecast()
+          print(forecast ?? "No Forecast")
+        } catch {
+          if let forecastError = error as? WeatherError {
+            switch forecastError {
+            case .invalidURL:
+              print(forecastError.localizedDescription)
+            case .invalidResponse:
+              print(forecastError.localizedDescription)
+            case .invalidData:
+              print(forecastError.localizedDescription)
+            case .unableToComplete:
+              print(forecastError.localizedDescription)
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -87,7 +109,7 @@ struct WeatherDayView: View {
 }
 
 struct BackgroundView: View {
-  @Binding var isNight: Bool
+  var isNight: Bool
 
   var body: some View {
     LinearGradient(gradient: Gradient(colors: [isNight ? .black : .blue, isNight ? .gray : Color("lightBlue")]),
