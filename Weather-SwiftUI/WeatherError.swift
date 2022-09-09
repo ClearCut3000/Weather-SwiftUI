@@ -1,5 +1,5 @@
 //
-//  Error.swift
+//  WeatherError.swift
 //  Weather-SwiftUI
 //
 //  Created by Николай Никитин on 07.09.2022.
