@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 @MainActor final class ForecastViewModel: ObservableObject {
 
@@ -29,13 +30,26 @@ import Foundation
   @Published var windSpeed = 1.2
   @Published var windDirection = "ENE"
   @Published var cloudiness = 80
+  var location = [33.33, 44.44]
 
   //MARK: - Methods
-  func getForecast() {
+  func getForecast(for locationName: String) {
+    print(locationName)
+    LocationManager.shared.getCoordinates(for: locationName) { result in
+      switch result {
+      case .success(let coordinates):
+        self.location = coordinates
+        print(self.location)
+      case .failure(let error):
+        print(error)
+      }
+    }
+
     Task {
       do {
-        forecast = try await NetworkManager.shared.getForecast()
+        forecast = try await NetworkManager.shared.getForecast(for: location)
         if let forecast = forecast {
+          print("Model configured")
           configureViewModel(with: forecast)
         }
       } catch {
@@ -49,6 +63,8 @@ import Foundation
             print(forecastError.localizedDescription)
           case .unableToComplete:
             print(forecastError.localizedDescription)
+          default:
+            print("Unknown error!")
           }
         }
       }

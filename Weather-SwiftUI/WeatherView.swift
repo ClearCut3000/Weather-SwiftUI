@@ -10,12 +10,21 @@ import SwiftUI
 struct WeatherView: View {
   //MARK: - Properties
   @StateObject private var viewModel = ForecastViewModel()
+  @State private var locationName: String = ""
 
   //MARK: - Main View
   var body: some View {
     ZStack {
       BackgroundView()
       VStack {
+        HStack {
+          TextField("Enter location here", text: $locationName)
+          Button {
+            viewModel.getForecast(for: locationName)
+          } label: {
+            Image(systemName: "magnifyingglass.circle")
+          }
+        }
         CityTextView(cityName: viewModel.cityName,
                      cityCountry: viewModel.cityCountry,
                      citySunrise: viewModel.citySunrise,
@@ -36,9 +45,12 @@ struct WeatherView: View {
                        cloudiness: viewModel.cloudiness)
       }
     }
-    .task {
-      viewModel.getForecast()
-    }
+  }
+
+  //MARK: - Methods
+
+  func getForecast(for location: String) {
+    
   }
 }
 

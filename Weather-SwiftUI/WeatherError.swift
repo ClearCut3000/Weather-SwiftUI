@@ -12,4 +12,7 @@ enum WeatherError: Error {
   case invalidResponse
   case invalidData
   case unableToComplete
+  case clGeocoderError
+  case coordinatesError
+  case invalidForecastCoordinates
 }

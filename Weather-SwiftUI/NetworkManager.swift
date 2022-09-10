@@ -18,10 +18,11 @@ class NetworkManager {
   
   private init() {}
 
-
-
-  func getForecast() async throws -> Forecast {
-    guard let url = URL(string: baseURL + latitudeURL + String(55.758664) + longitudeURL + String(37.619292) + apiKey) else {
+  func getForecast(for location: [Double]) async throws -> Forecast {
+    guard location.count == 2 else {
+      throw WeatherError.invalidForecastCoordinates
+    }
+    guard let url = URL(string: baseURL + latitudeURL + "\(location[0])" + longitudeURL + "\(location[1])" + apiKey) else {
       throw WeatherError.invalidURL
     }
     let (data, response) = try await URLSession.shared.data(from: url)
