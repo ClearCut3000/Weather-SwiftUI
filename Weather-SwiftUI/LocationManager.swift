@@ -14,18 +14,12 @@ class LocationManager {
 
   private init() {}
 
-  func getCoordinates(for location: String, completion: @escaping (Result<[Double], WeatherError>) -> Void) {
-    CLGeocoder().geocodeAddressString(location) { placemarks, error in
-      guard error == nil else {
-        completion(.failure(.clGeocoderError))
-        return
-      }
-      guard let latitude = placemarks?.first?.location?.coordinate.latitude,
-         let longitude = placemarks?.first?.location?.coordinate.longitude else {
-           completion(.failure(.coordinatesError))
-           return
-      }
-      completion(.success([latitude, longitude]))
+  func getCoordinates(for location: String) async throws -> [Double] {
+    let geocoder = CLGeocoder()
+    let placemark = try await geocoder.geocodeAddressString(location).first
+    guard let coordinates = placemark?.location?.coordinate else {
+      throw WeatherError.clGeocoderError
     }
+    return [coordinates.latitude, coordinates.longitude]
   }
 }

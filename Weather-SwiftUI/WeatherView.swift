@@ -20,11 +20,22 @@ struct WeatherView: View {
         HStack {
           TextField("Enter location here", text: $locationName)
           Button {
-            viewModel.getForecast(for: locationName)
+            Task {
+              await viewModel.getCoordinates(for: locationName)
+              await viewModel.getForecast()
+            }
           } label: {
             Image(systemName: "magnifyingglass.circle")
+              .resizable()
+              .scaledToFit()
+              .frame(width: 35, height: 35)
           }
         }
+        .padding(10)
+        .overlay(RoundedRectangle(cornerRadius: 16)
+                  .stroke(.blue, lineWidth: 2)
+        )
+        .frame(maxWidth: 290, minHeight: 40)
         CityTextView(cityName: viewModel.cityName,
                      cityCountry: viewModel.cityCountry,
                      citySunrise: viewModel.citySunrise,

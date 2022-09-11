@@ -30,22 +30,18 @@ import CoreLocation
   @Published var windSpeed = 1.2
   @Published var windDirection = "ENE"
   @Published var cloudiness = 80
-  var location = [33.33, 44.44]
+  var location: [Double] = []
 
   //MARK: - Methods
-  func getForecast(for locationName: String) {
-    print(locationName)
-    LocationManager.shared.getCoordinates(for: locationName) { result in
-      switch result {
-      case .success(let coordinates):
-        self.location = coordinates
-        print(self.location)
-      case .failure(let error):
-        print(error)
-      }
+  func getCoordinates(for locationName: String) async {
+    do {
+    location = try await LocationManager.shared.getCoordinates(for: locationName)
+    } catch {
+      print("Some error while geocoding occured!")
     }
+  }
 
-    Task {
+  func getForecast() async {
       do {
         forecast = try await NetworkManager.shared.getForecast(for: location)
         if let forecast = forecast {
@@ -68,7 +64,6 @@ import CoreLocation
           }
         }
       }
-    }
   }
 
   private func configureViewModel(with forecast: Forecast) {
